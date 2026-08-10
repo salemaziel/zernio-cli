@@ -35,6 +35,7 @@ let cli = yargs(hideBin(process.argv))
     default: false,
     global: true,
   })
+  .completion('completion', 'Generate shell completion script')
   .strict()
   .demandCommand(1, 'You need to specify a command. Run "zernio --help" for available commands.')
   .help()
