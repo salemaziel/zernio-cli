@@ -138,7 +138,7 @@ Legacy env vars `LATE_API_KEY` / `LATE_API_URL` and config at `~/.late/config.js
 
 ## AI Agent Integration
 
-This CLI ships with a `SKILL.md` file for AI agent discovery (Claude Code, OpenClaw, etc.). AI agents can use the CLI to schedule posts, manage inbox conversations, send broadcasts, run drip sequences, and set up comment-to-DM automations programmatically.
+This CLI ships with an open `SKILL.md` file for AI agent discovery (Hermes Agent, Claude Code, Codex CLI, OpenClaw, Antigravity CLI, etc.). AI agents can load this skill to schedule posts, manage inbox conversations, send broadcasts, run drip sequences, and set up comment-to-DM automations programmatically via terminal commands.
 
 ## Supported Platforms
 

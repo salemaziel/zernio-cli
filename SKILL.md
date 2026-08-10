@@ -3,7 +3,7 @@ name: zernio
 description: "Schedule social media posts, manage DMs/inbox, and set up broadcasts, drip sequences, and comment-to-DM automations across 13 platforms (Instagram, TikTok, X/Twitter, LinkedIn, Facebook, Threads, YouTube, Bluesky, Pinterest, Reddit, Snapchat, Telegram, Google Business) from the CLI. Use when the user wants to schedule or publish social media posts, manage DMs/inbox, or set up broadcasts, drip campaigns, or comment-to-DM automations across platforms."
 version: 0.2.0
 homepage: https://docs.zernio.com
-tags: [social-media, scheduling, instagram, tiktok, twitter, linkedin, facebook, threads, youtube, bluesky, pinterest, reddit, snapchat, telegram]
+tags: [social-media, scheduling, instagram, tiktok, twitter, linkedin, facebook, threads, youtube, bluesky, pinterest, reddit, snapchat, telegram, hermes]
 metadata:
   env:
     - ZERNIO_API_KEY (required) - Your Zernio API key from https://zernio.com/settings/api
