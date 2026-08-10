@@ -1,6 +1,6 @@
 ---
 name: zernio
-description: Schedule posts, manage inbox, broadcasts, sequences, and automations across 14 platforms from the CLI
+description: "Schedule social media posts, manage DMs/inbox, and set up broadcasts, drip sequences, and comment-to-DM automations across 13 platforms (Instagram, TikTok, X/Twitter, LinkedIn, Facebook, Threads, YouTube, Bluesky, Pinterest, Reddit, Snapchat, Telegram, Google Business) from the CLI. Use when the user wants to schedule or publish social media posts, manage DMs/inbox, or set up broadcasts, drip campaigns, or comment-to-DM automations across platforms."
 version: 0.2.0
 homepage: https://docs.zernio.com
 tags: [social-media, scheduling, instagram, tiktok, twitter, linkedin, facebook, threads, youtube, bluesky, pinterest, reddit, snapchat, telegram]
@@ -94,7 +94,8 @@ zernio profiles:get <profileId>
 # Update profile
 zernio profiles:update <profileId> --name "New Name"
 
-# Delete profile (must have no connected accounts)
+# Delete profile (must have no connected accounts) — verify it's the right one first
+zernio profiles:get <profileId>
 zernio profiles:delete <profileId>
 ```
 
@@ -140,7 +141,8 @@ zernio posts:list --search "product launch"
 # Get post details
 zernio posts:get <postId>
 
-# Delete a post
+# Delete a post — confirm it's the right one first
+zernio posts:get <postId>
 zernio posts:delete <postId>
 
 # Retry a failed post
@@ -194,10 +196,6 @@ zernio posts:create \
 zernio posts:create --text "Thoughts on AI agents..." --accounts <threadsId>,<twitterId>
 ```
 
-## Supported Platforms
-
-Instagram, TikTok, X (Twitter), LinkedIn, Facebook, Threads, YouTube, Bluesky, Pinterest, Reddit, Snapchat, Telegram, Google Business Profile.
-
 ## Error Handling
 
 Common errors and their meaning:
@@ -207,155 +205,9 @@ Common errors and their meaning:
 - `404` - Resource not found
 - `429` - Rate limited (account in cooldown)
 
-### Inbox (DMs, Comments, Reviews)
+## Inbox, Contacts, Broadcasts, Sequences, Automations
 
-```bash
-# List DM conversations
-zernio inbox:conversations --platform instagram
-zernio inbox:conversations --accountId <id> --status active
-
-# Read messages in a conversation
-zernio inbox:messages <conversationId> --accountId <id>
-
-# Send a DM
-zernio inbox:send <conversationId> --accountId <id> --message "Thanks for reaching out!"
-
-# List comments across posts
-zernio inbox:comments --platform instagram --since "2025-01-01"
-
-# Get comments on a specific post
-zernio inbox:post-comments <postId> --accountId <id>
-
-# Reply to a comment
-zernio inbox:reply <postId> --accountId <id> --message "Thank you!"
-
-# Reply to a specific comment (not the post)
-zernio inbox:reply <postId> --accountId <id> --message "Great point" --commentId <commentId>
-
-# List reviews (Facebook, Google Business)
-zernio inbox:reviews --minRating 1 --maxRating 3 --hasReply false
-
-# Reply to a review
-zernio inbox:review-reply <reviewId> --accountId <id> --message "Thanks for your feedback!"
-```
-
-### Contacts
-
-```bash
-# List contacts
-zernio contacts:list --profileId <id>
-zernio contacts:list --search "john" --tag vip --platform instagram
-
-# Create a contact
-zernio contacts:create --profileId <id> --accountId <id> --platform instagram --platformUserId <userId> --name "John Doe" --tags "vip,lead"
-
-# Get/update/delete
-zernio contacts:get <contactId>
-zernio contacts:update <contactId> --name "Jane Doe" --tags "vip,customer"
-zernio contacts:delete <contactId>
-
-# List channels (platforms) for a contact
-zernio contacts:channels <contactId>
-
-# Custom fields
-zernio contacts:set-field <contactId> <slug> --value "some value"
-zernio contacts:clear-field <contactId> <slug>
-
-# Bulk create from JSON file (up to 1000)
-zernio contacts:bulk-create --profileId <id> --accountId <id> --platform instagram --file ./contacts.json
-```
-
-### Broadcasts
-
-```bash
-# List broadcasts
-zernio broadcasts:list --profileId <id> --status draft
-
-# Create a broadcast draft (generic message)
-zernio broadcasts:create --profileId <id> --accountId <id> --platform instagram --name "Summer Sale" --message "Check out our summer deals!"
-
-# Create a WhatsApp broadcast with template
-zernio broadcasts:create --profileId <id> --accountId <id> --platform whatsapp --name "Order Update" --templateName "order_confirmation" --templateLanguage "en"
-
-# Add recipients
-zernio broadcasts:add-recipients <broadcastId> --contactIds <id1>,<id2>,<id3>
-zernio broadcasts:add-recipients <broadcastId> --useSegment
-
-# Send immediately or schedule
-zernio broadcasts:send <broadcastId>
-zernio broadcasts:schedule <broadcastId> --scheduledAt "2025-06-01T10:00:00Z"
-
-# Check delivery status
-zernio broadcasts:get <broadcastId>
-zernio broadcasts:recipients <broadcastId> --status delivered
-
-# Cancel
-zernio broadcasts:cancel <broadcastId>
-```
-
-### Sequences (Drip Campaigns)
-
-```bash
-# List sequences
-zernio sequences:list --profileId <id> --status active
-
-# Create a sequence (steps defined in JSON file)
-zernio sequences:create --profileId <id> --accountId <id> --platform instagram --name "Welcome Series" --stepsFile ./steps.json
-
-# steps.json example:
-# [
-#   {"order": 1, "delayMinutes": 0, "message": "Welcome! Thanks for connecting."},
-#   {"order": 2, "delayMinutes": 1440, "message": "Here are some tips to get started..."},
-#   {"order": 3, "delayMinutes": 4320, "message": "Check out our latest content!"}
-# ]
-
-# Activate/pause
-zernio sequences:activate <sequenceId>
-zernio sequences:pause <sequenceId>
-
-# Enroll contacts
-zernio sequences:enroll <sequenceId> --contactIds <id1>,<id2>
-
-# Check enrollments
-zernio sequences:enrollments <sequenceId> --status active
-
-# Unenroll a contact
-zernio sequences:unenroll <sequenceId> <contactId>
-```
-
-### Comment-to-DM Automations
-
-```bash
-# List automations
-zernio automations:list --profileId <id>
-
-# Create: auto-DM anyone who comments "info" on a post
-zernio automations:create \
-  --profileId <id> --accountId <id> \
-  --platformPostId <igPostId> \
-  --name "Lead Magnet" \
-  --keywords "info,details,link" \
-  --dmMessage "Here's the link you asked for: https://example.com" \
-  --commentReply "Check your DMs!"
-
-# Trigger on ALL comments (no keywords filter)
-zernio automations:create \
-  --profileId <id> --accountId <id> \
-  --platformPostId <igPostId> \
-  --name "Engagement Boost" \
-  --dmMessage "Thanks for engaging! Here's a special offer..."
-
-# Update
-zernio automations:update <automationId> --isActive false
-zernio automations:update <automationId> --keywords "buy,order" --matchMode exact
-
-# View trigger logs
-zernio automations:logs <automationId> --status sent
-zernio automations:logs <automationId> --status failed
-
-# Delete
-zernio automations:delete <automationId>
-```
+The full per-command reference for inbox (DMs, comments, reviews), contacts, broadcasts, sequences (drip campaigns), and comment-to-DM automations — with all flags and verification steps — lives in `references/COMMANDS.md`. Load that file when you need flag-level detail for any of these areas.
 
 ## Tips for AI Agents
 
@@ -368,3 +220,4 @@ zernio automations:delete <automationId>
 - Broadcasts and sequences work across all inbox platforms (Instagram, Facebook, Telegram, X, WhatsApp, Bluesky, Reddit)
 - Comment-to-DM automations currently support Instagram and Facebook
 - Use `zernio contacts:list` to get contact IDs before enrolling in sequences or adding to broadcasts
+- Before any destructive (`posts:delete`, `profiles:delete`, `contacts:delete`, `automations:delete`) or batch operation (`contacts:bulk-create`, `broadcasts:send`, `sequences:enroll`), run a read/get/list first to confirm the target and recipient count
